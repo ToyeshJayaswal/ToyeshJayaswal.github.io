@@ -68,13 +68,14 @@
     <header>
         <h1>Outreach</h1>
     </header>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="research.html">Research</a>
-        <a href="exposition.html">Exposition</a>
-        <a href="outreach.html">Outreach</a>
-        <a href="books.html">Book Recs</a>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script>
+        fetch("nav.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("navbar-placeholder").innerHTML = data;
+            });
+    </script>
     <div class="container">
         <h2 class="section-title">YouTube!</h2>
         <p>In high school, we were tasked to work on a personal project for 100 hours. As I learned a lot from YouTube, I wanted to 
@@ -83,13 +84,14 @@
             the world is topologically spec(Z) (like a flat-earther, but mathier).
         </p>
         <div class="youtube-embed">
-            <iframe 
-                src="https://www.youtube.com/embed/videoseries?list=UUspeczearther8278" 
+            <!-- <iframe 
+                src="https://www.youtube.com/@speczearther8278" 
                 frameborder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowfullscreen 
                 title="YouTube Uploads Playlist Preview">
-            </iframe>
+            </iframe> -->
+            <iframe width="853" height="480" src="https://www.youtube.com/embed/f_7gS-Ii_qE" title="Ma 14 Lecture 1 - Basic Definitions (Differential Forms)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
     </div>
     <div class="container">

@@ -61,13 +61,14 @@
     <header>
         <h1>Math Exposition</h1>
     </header>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="research.html">Research</a>
-        <a href="exposition.html">Exposition</a>
-        <a href="outreach.html">Outreach</a>
-        <a href="books.html">Book Recs</a>
-    </nav>
+    <div id="navbar-placeholder"></div>
+    <script>
+        fetch("nav.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("navbar-placeholder").innerHTML = data;
+            });
+    </script>
     <div class="container">
         <!-- <h2 class="section-title">My Research</h2> -->
         <p>Below, you can find a list of expository notes I have written over the years. Many of the notes are written for PROMYS minicourses

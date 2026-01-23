@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Math</title>
+    <link rel="stylesheet" href="style.css">    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 20px;
+            display: block;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .container ul li {
+            margin-bottom: 10px; /* Adds space below each list item */
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+        .section-title {
+            font-size: 2em;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Not Math (Robotics, CS, etc.)</h1>
+    </header>
+    <div id="navbar-placeholder"></div>
+    <script>
+        fetch("nav.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("navbar-placeholder").innerHTML = data;
+            });
+    </script>
+    <div class="container">
+        <p><i>Picture this: it's Friday morning and you've just received your extra long weekend PSET. <br> 
+            &nbsp;&nbsp;&nbsp;&nbsp;You must be thinking "Life just couldn't get any better than this."<br>
+            "Life just couldn't get any better than this!"<br>
+            But you'd be wrong!<br>
+            Wrong?! <br>
+            Becuase of something that's <b>not math</b>.<br>
+            <b>NOT MATH?!</b><br>
+        </i>
+        -PROMYS "Mandatory Fun" Skit
+        </p>
+    </div>
+
+    <div class="container">
+        <p>I've had some level of interest in computer science and making things. 
+        </p>
+    </div>
+
+    <div class="container">
+        <!-- robotic arm -->
+        This is a project for a class at Caltech where we were tasked to create a robotic arm to complete some task of our choosing. 
+        The project we decided to pursue was to create a robot that could play connect4. 
+        <br><br>
+        <!-- Kinematics Math -->
+        There are two courses at Caltech on kinematics - the first is a theory class where you learn the mathematics and design simulations,
+        and the second is the project class where you actually make an arm from scratch. Before taking the theory class, I thought the mathematics
+        of moving an arm would be extraordinarily complicated - after all, the movements can get quite complex. But it turns out that the math
+        is actually very straightforward and arguably simple!
+        <br><br>
+
+        First, formulate the problem: you have some things that you can control - motors, maybe pistons, etc. For the output, you have some 
+        tip of an arm or similar part that you want to position at some real world coordinates with some real world orientation. This still seems
+        like a difficult problem as the relationships of your motor to your output can be very nonlinear complicated functions. But we learned
+        how to deal with such problems from Newton! We can apply the principles of calculus.
+        <br><br>
+
+        The idea is you have some "phase space" of abstract possible positions of your motors/pistons etc. This has the dimensionality of how many
+        parameters you can independently specify. You have a mapping from this space to the six dimensional target output space of real world positions and angles 
+        (it could be higher dimensions or different looking if you have multiple outputs you want to specify e.g. you want to control multiple arms, 
+        or have center of mass balance). You have a map from the phase space to the target space which takes the parameters (motor angles, ...) to 
+        the physical position(s) and orientation(s) of the target point. This is quite nonlinear, so the goal is to linearize at every point with calculus.
+        <br><br>
+        
+        At each point, we can linearize this system and get a linear map from our N dimensional phase space to our 6 dimensional
+        target space. A priori, it may seem that we need to write complicated equations and differentiate them. But in fact, we can often "cheat" and immediately
+        write down the linear differential map from geometric considerations. For example, if you have a linear piston, you know it'll move the endpoint linearly 
+        in the direction the piston is facing. If you have a motor, it'll rotate the endpoint based on the distance of the endpoint to the motor (v=r*omega). 
+        This does require some intermediate calculations for positions, but at least it means we don't have to write any explicit differentiation functions
+        when writing our code. In fact, if things are set up well (which our professor made sure they were), you can make everything very modular and the code
+        will figure out all the transformation laws just based on the (initial) relative positions of all the joints.
+        <br><br>
+
+        Now comes the fun part! We have a map A:V\to W where V and W are the tangent spaces of the phase and target space (small increments of motors vs
+        the resulting increments of the output goal point). We want to use this to figure out how to move the motors so that the output moves as desired.
+        Invert A of course! Now this only works if V and W have the same dimension i.e. we have just as many variable parameters as we do goal output parameters.
+        This is unlikely - often, you will have more inputs that you can change than outputs, but sometimes you can even have fewer (more details on these later). 
+        Solution? Take what's called the (a?) "pseudo-inverse" of A. 
+        <br><br>
+        
+        One way to do this is to take the "SVD" of A and invert the singular values. If you study math
+        like me and perhaps saw this once in your freshman year linear algebra class and immediately after, threw it out of your memory because you thought you would never need it
+        again (definitely not speaking from personal experience), let me quickly remind you how this works. We all know A is diagonalizable if it is symmetric - however
+        an arbitrary A often will not be symmetric! Worse, here, it won't even be square!! There's a solution: take A^TA. This has eigenvalues, the square roots of which are
+        the "singular values" of A (these agree with eigenvalues when A is symmetric). Further, you can take the (orthonormal) eigenvectors of A^TA and apply A to them - you
+        will get an orthogonal basis of W, with each vector scaled by some factor. This gives you a decomposition of A into a matrix in O(W)xDiag(V,W)xO(V), by which I mean an orthogonal
+        matrix in W times a diagonal matrix from V to W times an orthogonal matrix of V. This is all very neat algebraically, but it has a nice geometric description: linear maps take
+        ellipses to ellipses, and in particular, you can start with the unit sphere and pick a basis which will be sent to principal coordinate axes of the image ellipsoid. The singular
+        values describe precisely the distortion of the sphere in the different principal directions.
+        <br><br>
+
+        tl;dr There's some way of decomposing an <i>arbitrary</i> matrix nicely so you can get eigenvalues. Now, simply invert the two orthogonal matrices on the ends
+        (switching their order) and invert each singular value. There's your pseudo-inverse! <!-- You may worry that there are issues with inverting zero. Your worry would be well founded and in fact 
+        will lead your robot to doing something like this: -->
+        <br><br>
+        to be completed...
+    </div>
+    
+</body>
